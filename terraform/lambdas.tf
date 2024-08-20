@@ -51,7 +51,7 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
 # Authorizer lambda
 data "archive_file" "authorizer_zip" {
   type        = "zip"
-  source_dir  = "../src/lambdas/authorizer"
+  source_dir  = "../dist/lambdas/authorizer"
   output_path = "../dist/authorizer.zip"
 }
 
@@ -80,7 +80,7 @@ resource "aws_lambda_function" "jwt_authorizer" {
 # Login lambda
 data "archive_file" "login_zip" {
   type        = "zip"
-  source_dir  = "../src/lambdas/login"
+  source_dir  = "../dist/lambdas/login"
   output_path = "../dist/login.zip"
 }
 
@@ -140,7 +140,7 @@ resource "aws_iam_role_policy" "login_lambda_custom_policy" {
 # Registration lambda
 data "archive_file" "registration_zip" {
   type        = "zip"
-  source_dir  = "../src/lambdas/registration"
+  source_dir  = "../dist/lambdas/registration"
   output_path = "../dist/registration.zip"
 }
 
@@ -200,7 +200,7 @@ resource "aws_iam_role_policy" "registration_lambda_custom_policy" {
 # API lambda
 data "archive_file" "api_zip" {
   type        = "zip"
-  source_dir  = "../src/lambdas/api"
+  source_dir  = "../dist/lambdas/api"
   output_path = "../dist/api.zip"
 }
 

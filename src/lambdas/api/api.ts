@@ -2,11 +2,11 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { TaskService } from './tasks/TaskService';
 import { TaskRepository } from './tasks/TaskRepository';
 // @ts-ignore
-import { getConfigSecrets } from '/opt/common/utils/getConfigSecrets'
+import { getConfigSecrets } from '/opt/nodejs/common/utils/getConfigSecrets'
 // @ts-ignore
-import { createLogger } from '/opt/common//utils/logger'
+import { createLogger } from '/opt/nodejs/common/utils/logger'
 // @ts-ignore
-import { Logger } from '/opt/common/utils/interfaces'
+import { Logger } from '/opt/nodejs/common/utils/interfaces'
 import { createTaskSchema, taskIdSchema, updateTaskSchema } from './apiSchemas'
 
 const logger: Logger = createLogger({ serviceName: 'TaskAPI' });

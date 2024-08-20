@@ -3,15 +3,14 @@ import jwt from 'jsonwebtoken';
 import { CustomAPIGatewayAuthorizerResult } from './interfaces'
 import { StatementEffect } from 'aws-lambda/trigger/api-gateway-authorizer'
 // @ts-ignore
-import { getConfigSecrets } from '/opt/common/utils/getConfigSecrets'
+import { getConfigSecrets } from '/opt/nodejs/common/utils/getConfigSecrets'
 // @ts-ignore
-import { Logger } from '/opt/common/utils/interfaces'
+import { Logger } from '/opt/nodejs/common/utils/interfaces'
 // @ts-ignore
-import { createLogger } from '/opt/common//utils/logger'
+import { createLogger } from '/opt/nodejs/common//utils/logger'
 
 export const jwtAuthorizer: Handler = async (
-    event: APIGatewayTokenAuthorizerEvent,
-    context: Context
+    event: APIGatewayTokenAuthorizerEvent
 ): Promise<CustomAPIGatewayAuthorizerResult> => {
     const logger: Logger = createLogger({ serviceName: 'Authorizer' });
     logger.info('Authorizer received request');

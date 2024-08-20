@@ -10,12 +10,11 @@
     "deploy": "npm run build && cd terraform && terraform init && terraform apply -auto-approve",
     "lint": "eslint 'src/**/*.{ts,js}'",
     "lint:fix": "eslint 'src/**/*.{ts,js}' --fix",
-    "zip-common-layer": "mkdir -p layer && cp -r src/common/* layer/ && cd layer && zip -r ../dist/common-layer.zip . && cd .. && rm -rf layer"
+    "zip-common-layer": "mkdir -p layer && cp -r dist/nodejs/common/* layer/ && cd layer && zip -r ../dist/common-layer.zip . && cd .. && rm -rf layer"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "@types/aws-lambda": "^8.10.143",
     "@types/bcrypt": "^5.0.2",

@@ -1,9 +1,9 @@
 import { DynamoDB } from 'aws-sdk';
 import { TaskDAO } from './TaskDAO';
 // @ts-ignore
-import { createLogger } from '/opt/common//utils/logger'
+import { createLogger } from '/opt/nodejs/common//utils/logger'
 // @ts-ignore
-import { Logger } from '/opt/common/utils/interfaces'
+import { Logger } from '/opt/nodejs/common/utils/interfaces'
 
 export class TaskRepository {
     private readonly tableName: string;

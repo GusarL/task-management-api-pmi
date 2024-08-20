@@ -1,16 +1,16 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from 'aws-lambda';
 // @ts-ignore
-import { UserRepository } from '/opt/common/users/UserRepository';
+import { UserRepository } from '/opt/nodejs/common/users/UserRepository';
 // @ts-ignore
-import { UserService } from '/opt/common/users/UserService';
+import { UserService } from '/opt/nodejs/common/users/UserService';
 import { RegisterUserRequestBody } from './interfaces'
 import { userRegistrationSchema } from './registrationSchemas'
 // @ts-ignore
-import { getConfigSecrets } from '/opt/common/utils/getConfigSecrets'
+import { getConfigSecrets } from '/opt/nodejs/common/utils/getConfigSecrets'
 // @ts-ignore
-import { Logger } from '/opt/common/utils/interfaces'
+import { Logger } from '/opt/nodejs/common/utils/interfaces'
 // @ts-ignore
-import { createLogger } from '/opt/common//utils/logger'
+import { createLogger } from '/opt/nodejs/common//utils/logger'
 const logger: Logger = createLogger({ serviceName: 'UserRegistrationService' });
 
 let userService: UserService;
