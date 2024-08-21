@@ -69,6 +69,12 @@ resource "aws_api_gateway_resource" "tasks" {
   path_part   = "tasks"
 }
 
+resource "aws_api_gateway_resource" "task" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  parent_id   = aws_api_gateway_resource.tasks.id
+  path_part   = "{id}"
+}
+
 resource "aws_api_gateway_method" "get_tasks" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.tasks.id
@@ -80,8 +86,8 @@ resource "aws_api_gateway_method" "get_tasks" {
 resource "aws_api_gateway_integration" "integration_get_tasks" {
   rest_api_id             = aws_api_gateway_rest_api.api.id
   resource_id             = aws_api_gateway_resource.tasks.id
-  http_method             = "GET"
-  integration_http_method = "GET"
+  http_method             = aws_api_gateway_method.get_tasks.http_method
+  integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.api.invoke_arn
 }
@@ -97,7 +103,7 @@ resource "aws_api_gateway_method" "post_tasks" {
 resource "aws_api_gateway_integration" "integration_post_tasks" {
   rest_api_id             = aws_api_gateway_rest_api.api.id
   resource_id             = aws_api_gateway_resource.tasks.id
-  http_method             = "POST"
+  http_method             = aws_api_gateway_method.post_tasks.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.api.invoke_arn
@@ -105,7 +111,7 @@ resource "aws_api_gateway_integration" "integration_post_tasks" {
 
 resource "aws_api_gateway_method" "put_task" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.tasks.id
+  resource_id   = aws_api_gateway_resource.task.id
   http_method   = "PUT"
   authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.jwt.id
@@ -117,9 +123,9 @@ resource "aws_api_gateway_method" "put_task" {
 
 resource "aws_api_gateway_integration" "integration_put_task" {
   rest_api_id             = aws_api_gateway_rest_api.api.id
-  resource_id             = aws_api_gateway_resource.tasks.id
-  http_method             = "PUT"
-  integration_http_method = "PUT"
+  resource_id             = aws_api_gateway_resource.task.id
+  http_method             = aws_api_gateway_method.put_task.http_method
+  integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.api.invoke_arn
   request_parameters = {
@@ -129,7 +135,7 @@ resource "aws_api_gateway_integration" "integration_put_task" {
 
 resource "aws_api_gateway_method" "delete_task" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.tasks.id
+  resource_id   = aws_api_gateway_resource.task.id
   http_method   = "DELETE"
   authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.jwt.id
@@ -141,9 +147,9 @@ resource "aws_api_gateway_method" "delete_task" {
 
 resource "aws_api_gateway_integration" "integration_delete_task" {
   rest_api_id             = aws_api_gateway_rest_api.api.id
-  resource_id             = aws_api_gateway_resource.tasks.id
-  http_method             = "DELETE"
-  integration_http_method = "DELETE"
+  resource_id             = aws_api_gateway_resource.task.id
+  http_method             = aws_api_gateway_method.delete_task.http_method
+  integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.api.invoke_arn
   request_parameters = {
@@ -160,6 +166,22 @@ resource "aws_api_gateway_deployment" "deployment" {
     aws_api_gateway_method.put_task,
     aws_api_gateway_method.delete_task
   ]
+
+  triggers = {
+    redeployment = sha1(jsonencode([
+
+      aws_api_gateway_resource.tasks,
+      aws_api_gateway_method.get_tasks,
+      aws_api_gateway_integration.integration_get_tasks,
+      aws_api_gateway_method.post_tasks,
+      aws_api_gateway_integration.integration_post_tasks,
+      aws_api_gateway_resource.task,
+      aws_api_gateway_method.put_task,
+      aws_api_gateway_integration.integration_put_task,
+      aws_api_gateway_method.delete_task,
+      aws_api_gateway_integration.integration_delete_task,
+    ]))
+  }
   rest_api_id = aws_api_gateway_rest_api.api.id
   stage_name  = "v1"
 }

@@ -10,7 +10,7 @@
     "deploy": "npm run build && cd terraform && terraform init && terraform apply -auto-approve",
     "lint": "eslint 'src/**/*.{ts,js}'",
     "lint:fix": "eslint 'src/**/*.{ts,js}' --fix",
-    "zip-common-layer": "mkdir -p layer && cp -r dist/nodejs/common/* layer/ && cd layer && zip -r ../dist/common-layer.zip . && cd .. && rm -rf layer"
+    "zip-common-layer": "mkdir -p nodejs && cp -r dist/common/* nodejs/ && cp package.json nodejs/ && cp -r node_modules nodejs/ && zip -r nodejs.zip nodejs && rm -rf nodejs"
   },
   "keywords": [],
   "author": "",
@@ -18,15 +18,15 @@
   "dependencies": {
     "@types/aws-lambda": "^8.10.143",
     "@types/bcrypt": "^5.0.2",
-    "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^22.4.0",
     "@types/uuid": "^10.0.0",
     "aws-sdk": "^2.1677.0",
-    "express": "^4.19.2",
+    "bcrypt": "^5.1.1",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",

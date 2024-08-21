@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
-import { UserDAO } from './UserDAO';
-import { UserRepository } from './UserRepository';
+import { UserDAO } from './userDAO';
+import { UserRepository } from './userRepository';
 
 export class UserService {
     private readonly userRepository: UserRepository;

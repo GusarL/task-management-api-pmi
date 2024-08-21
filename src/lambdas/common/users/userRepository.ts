@@ -1,5 +1,5 @@
 import { DynamoDB } from 'aws-sdk';
-import { UserDAO } from './UserDAO';
+import { UserDAO } from './userDAO';
 
 export class UserRepository {
     private readonly tableName: string;
@@ -34,19 +34,9 @@ export class UserRepository {
         };
 
         try {
-            const result = await this.dynamoDb.query(params).promise();
-            if (result.Items && result.Items.length > 0) {
-                const unmarshalledItem = DynamoDB.Converter.unmarshall(result.Items[0]);
-                return {
-                    userId: unmarshalledItem.userId as string,
-                    username: unmarshalledItem.username as string,
-                    email: unmarshalledItem.email as string,
-                    createdAt: unmarshalledItem.createdAt as string,
-                    updatedAt: unmarshalledItem.updatedAt as string,
-                    lastLogin: unmarshalledItem.lastLogin as string | undefined,
-                    passwordHash: unmarshalledItem.passwordHash as string,
-                    isActive: unmarshalledItem.isActive as boolean,
-                };
+            const user = await this.dynamoDb.query(params).promise();
+            if (user.Items && user.Items.length > 0) {
+                return user.Items[0] as unknown as UserDAO;
             } else {
                 return null;
             }

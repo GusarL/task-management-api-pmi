@@ -48,10 +48,29 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+data "aws_caller_identity" "current" {}
+
+# Lambda Permission for API Gateway to Invoke the Functions
+resource "aws_lambda_permission" "apigateway_invoke" {
+  for_each = toset([
+    aws_lambda_function.jwt_authorizer.function_name,
+    aws_lambda_function.login_lambda.function_name,
+    aws_lambda_function.registration_lambda.function_name,
+    aws_lambda_function.api.function_name
+  ])
+
+  statement_id  = "AllowAPIGatewayInvoke-${each.value}"
+  action        = "lambda:InvokeFunction"
+  function_name = each.value
+  principal     = "apigateway.amazonaws.com"
+
+  # The source ARN for the specific API Gateway resource
+  source_arn = "arn:aws:execute-api:eu-central-1:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api.id}/*"
+}
 # Authorizer lambda
 data "archive_file" "authorizer_zip" {
   type        = "zip"
-  source_dir  = "../dist/lambdas/authorizer"
+  source_dir  = "../dist/authorizer"
   output_path = "../dist/authorizer.zip"
 }
 
@@ -75,12 +94,16 @@ resource "aws_lambda_function" "jwt_authorizer" {
       SECRET_ARN       = aws_secretsmanager_secret.app_config.arn
     }
   }
+
+  layers = [
+    aws_lambda_layer_version.common_layer.arn
+  ]
 }
 
 # Login lambda
 data "archive_file" "login_zip" {
   type        = "zip"
-  source_dir  = "../dist/lambdas/login"
+  source_dir  = "../dist/login"
   output_path = "../dist/login.zip"
 }
 
@@ -140,7 +163,7 @@ resource "aws_iam_role_policy" "login_lambda_custom_policy" {
 # Registration lambda
 data "archive_file" "registration_zip" {
   type        = "zip"
-  source_dir  = "../dist/lambdas/registration"
+  source_dir  = "../dist/registration"
   output_path = "../dist/registration.zip"
 }
 
@@ -200,7 +223,7 @@ resource "aws_iam_role_policy" "registration_lambda_custom_policy" {
 # API lambda
 data "archive_file" "api_zip" {
   type        = "zip"
-  source_dir  = "../dist/lambdas/api"
+  source_dir  = "../dist/api"
   output_path = "../dist/api.zip"
 }
 
@@ -279,5 +302,5 @@ resource "aws_iam_role_policy_attachment" "lambda_exec_role_attachment" {
 resource "aws_lambda_layer_version" "common_layer" {
   layer_name          = "common-layer"
   compatible_runtimes = ["nodejs20.x"]
-  filename            = "../dist/common-layer.zip"
+  filename            = "../nodejs.zip"
 }

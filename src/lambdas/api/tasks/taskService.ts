@@ -1,6 +1,6 @@
-import { TaskRepository } from './TaskRepository';
+import { TaskRepository } from './taskRepository';
 import { v4 as uuidv4 } from 'uuid';
-import { TaskDAO } from './TaskDAO';
+import { TaskDAO } from './taskDAO';
 
 export class TaskService {
     private taskRepository: TaskRepository;
@@ -13,7 +13,7 @@ export class TaskService {
         return this.taskRepository.getTasksByUserId(userId);
     }
 
-    public async createTask(userId: string, title: string, description: string): Promise<TaskDAO> {
+    public async createTask(userId: string, title?: string, description?: string): Promise<TaskDAO> {
         const taskId = uuidv4();
         const createdAt = new Date().toISOString();
         const updatedAt = createdAt;
@@ -21,12 +21,11 @@ export class TaskService {
         const task: TaskDAO = {
             taskId,
             userId,
-            title,
-            description,
+            ...(title && { title }),
+            ...(description && { description }),
             createdAt,
             updatedAt
         };
-
         await this.taskRepository.createTask(task);
         return task;
     }
@@ -37,16 +36,14 @@ export class TaskService {
         if (!existingTask || existingTask.userId !== userId) {
             throw new Error(`Task with ID ${taskId} not found for user ${userId}.`);
         }
-
         const updatedTask: Partial<TaskDAO> = {
             taskId: existingTask.taskId,
             userId: existingTask.userId,
-            title: title ?? existingTask.title,
-            description: description ?? existingTask.description,
+            title: title ? title : existingTask.title,
+            description: description ? description : existingTask.description,
             createdAt: existingTask.createdAt,
             updatedAt: new Date().toISOString()
         };
-
         await this.taskRepository.updateTask(updatedTask);
 
         return updatedTask;

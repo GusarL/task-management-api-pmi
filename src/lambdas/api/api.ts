@@ -1,13 +1,14 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { TaskService } from './tasks/TaskService';
-import { TaskRepository } from './tasks/TaskRepository';
+import { TaskService } from './tasks/taskService';
+import { TaskRepository } from './tasks/taskRepository';
 // @ts-ignore
-import { getConfigSecrets } from '/opt/nodejs/common/utils/getConfigSecrets'
+import { getConfigSecrets } from '/opt/nodejs/utils/configSecrets'
 // @ts-ignore
-import { createLogger } from '/opt/nodejs/common/utils/logger'
+import { createLogger } from '/opt/nodejs/utils/logger'
 // @ts-ignore
-import { Logger } from '/opt/nodejs/common/utils/interfaces'
+import { Logger } from '/opt/nodejs/utils/interfaces'
 import { createTaskSchema, taskIdSchema, updateTaskSchema } from './apiSchemas'
+import { CreateTaskRequestBody } from './tasks/interfaces'
 
 const logger: Logger = createLogger({ serviceName: 'TaskAPI' });
 
@@ -22,11 +23,13 @@ const initialize = async () => {
 };
 
 export const apiHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    logger.info('Task API request received');
     await initialize();
 
     try {
         const httpMethod = event.httpMethod;
-        const userId = event.requestContext.authorizer?.claims['cognito:username'] || '';
+        const parsedUser = JSON.parse(event?.requestContext?.authorizer?.user ?? '')
+        const userId = parsedUser ? parsedUser.userId : undefined;
 
         switch (httpMethod) {
             case 'GET':
@@ -34,7 +37,7 @@ export const apiHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewa
             case 'POST':
                 return await handleCreateTask(userId, event.body);
             case 'PUT':
-                return await handleUpdateTask(event.pathParameters?.id!, event.body);
+                return await handleUpdateTask(event.pathParameters?.id!, userId, event.body);
             case 'DELETE':
                 return await handleDeleteTask(event.pathParameters?.id!);
             default:
@@ -61,9 +64,8 @@ const handleGetTasks = async (userId: string): Promise<APIGatewayProxyResult> =>
 };
 
 const handleCreateTask = async (userId: string, body: string | null): Promise<APIGatewayProxyResult> => {
-    const parsedBody = JSON.parse(body || '{}');
-    const { error, value } = createTaskSchema.validate(parsedBody);
-
+    const parsedBody: CreateTaskRequestBody = JSON.parse(body || '{}');
+    const { error, value } = createTaskSchema.validate({...parsedBody, userId});
     if (error) {
         return {
             statusCode: 400,
@@ -79,7 +81,7 @@ const handleCreateTask = async (userId: string, body: string | null): Promise<AP
     };
 };
 
-const handleUpdateTask = async (taskId: string, body: string | null): Promise<APIGatewayProxyResult> => {
+const handleUpdateTask = async (taskId: string, userId: string, body: string | null): Promise<APIGatewayProxyResult> => {
     const { error: taskIdError } = taskIdSchema.validate(taskId);
 
     if (taskIdError) {

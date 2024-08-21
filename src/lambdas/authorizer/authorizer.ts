@@ -1,13 +1,13 @@
-import { APIGatewayTokenAuthorizerEvent, Context, Handler } from 'aws-lambda';
+import { APIGatewayTokenAuthorizerEvent, Handler } from 'aws-lambda';
 import jwt from 'jsonwebtoken';
 import { CustomAPIGatewayAuthorizerResult } from './interfaces'
 import { StatementEffect } from 'aws-lambda/trigger/api-gateway-authorizer'
 // @ts-ignore
-import { getConfigSecrets } from '/opt/nodejs/common/utils/getConfigSecrets'
+import { getConfigSecrets } from '/opt/nodejs/utils/configSecrets'
 // @ts-ignore
-import { Logger } from '/opt/nodejs/common/utils/interfaces'
+import { Logger } from '/opt/nodejs/utils/interfaces'
 // @ts-ignore
-import { createLogger } from '/opt/nodejs/common//utils/logger'
+import { createLogger } from '/opt/nodejs/utils/logger'
 
 export const jwtAuthorizer: Handler = async (
     event: APIGatewayTokenAuthorizerEvent
