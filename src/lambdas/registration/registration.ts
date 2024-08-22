@@ -7,8 +7,6 @@ import { getConfigSecrets } from '/opt/nodejs/utils/configSecrets'
 import { Logger } from '/opt/nodejs/utils/interfaces'
 import { createLogger } from '/opt/nodejs/utils/logger'
 
-const logger: Logger = createLogger({ serviceName: 'UserRegistrationService' });
-
 let userService: UserService;
 
 const initialize = async () => {
@@ -20,6 +18,7 @@ const initialize = async () => {
 };
 
 export const registerUserHandler: Handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    const logger: Logger = createLogger({ serviceName: 'UserRegistrationService' });
     logger.info('Received request to register user', { userName: event?.body ? JSON.parse(event.body).username : undefined });
     await initialize();
 
