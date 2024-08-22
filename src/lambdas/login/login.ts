@@ -1,13 +1,9 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from 'aws-lambda';
 import bcrypt from 'bcrypt';
-// @ts-ignore
 import { UserService } from '/opt/nodejs/users/userService';
-// @ts-ignore
 import { createLogger } from '/opt/nodejs/utils/logger'
-// @ts-ignore
 import { getConfigSecrets } from '/opt/nodejs/utils/configSecrets'
 import jwt from 'jsonwebtoken';
-// @ts-ignore
 import { UserRepository } from '/opt/nodejs/users/userRepository';
 import { LoginUserRequestBody } from './interfaces'
 import { userLoginSchema } from './loginSchemas'

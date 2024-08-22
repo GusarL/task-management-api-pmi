@@ -1,11 +1,8 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { TaskService } from './tasks/taskService';
 import { TaskRepository } from './tasks/taskRepository';
-// @ts-ignore
 import { getConfigSecrets } from '/opt/nodejs/utils/configSecrets'
-// @ts-ignore
 import { createLogger } from '/opt/nodejs/utils/logger'
-// @ts-ignore
 import { Logger } from '/opt/nodejs/utils/interfaces'
 import { createTaskSchema, taskIdSchema, updateTaskSchema } from './apiSchemas'
 import { CreateTaskRequestBody } from './tasks/interfaces'

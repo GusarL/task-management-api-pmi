@@ -11,7 +11,15 @@
     "strict": true,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "/opt/nodejs/utils/configSecrets": ["src/lambdas/common/utils/configSecrets"],
+      "/opt/nodejs/utils/interfaces": ["src/lambdas/common/utils/interfaces"],
+      "/opt/nodejs/utils/logger": ["src/lambdas/common/utils/logger"],
+      "/opt/nodejs/users/userService": ["src/lambdas/common/users/userService"],
+      "/opt/nodejs/users/userRepository": ["src/lambdas/common/users/userRepository"],
+    }
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "**/*.test.ts"]
