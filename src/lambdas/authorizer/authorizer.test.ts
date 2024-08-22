@@ -5,8 +5,10 @@ import { getConfigSecrets } from '/opt/nodejs/utils/configSecrets';
 import { createLogger } from '/opt/nodejs/utils/logger';
 
 jest.mock('jsonwebtoken');
-jest.mock('/opt/nodejs/utils/configSecrets');
 jest.mock('/opt/nodejs/utils/logger');
+jest.mock('/opt/nodejs/utils/configSecrets', () => ({
+    getConfigSecrets: jest.fn().mockReturnValue({ jwtSecret: 'testSecret' }),
+}));
 
 describe('jwtAuthorizer', () => {
     let event: APIGatewayTokenAuthorizerEvent;
@@ -22,7 +24,7 @@ describe('jwtAuthorizer', () => {
         event = {
             type: 'TOKEN',
             authorizationToken: 'Bearer testtoken',
-            methodArn: 'arn:aws:execute-api:us-east-1:123456789012:abcdef1234/test/GET/request',
+            methodArn: 'arn:aws:execute-api:test',
         } as APIGatewayTokenAuthorizerEvent;
         contextMock = {
             functionName: 'test',
